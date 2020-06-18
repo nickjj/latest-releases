@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+config_path="${HOME}/.config/latest-releases"
+auth_path="${config_path}/auth"
+github_path="${config_path}/github"
+
+curl_auth=""
+if [ -f "${auth_path}" ]; then
+    # shellcheck source=/dev/null
+    source "${auth_path}"
+
+    curl_auth="-u ${GITHUB_USERNAME}:${GITHUB_PERSONAL_ACCESS_TOKEN}"
+fi
+
+github_latest_tags () {
+    if [ ! -f "${github_path}" ]; then
+        echo "${github_path} not found \
+
+
+Add your list of GitHub repos to the above file. Separate out
+each entry on a new line and only include the owner/repo.
+
+Here's an example of what that file could look like:
+
+pallets/flask
+phoenixframework/phoenix"
+        exit 1
+    fi
+
+    printf "Latest releases on GitHub:\n\n"
+
+    local nl=$'\n'
+    local out=""
+    while read -r repo
+    do
+        local tag_info=""
+        local tag_name=""
+        local tag_commit_url=""
+        local tag_commit_date=""
+
+        set +e
+        if ! tag_info="$(curl "${curl_auth}" -s \
+            "https://api.github.com/repos/${repo}/tags?per_page=1" | \
+            jq -r ".[0].name, .[0].commit.url" 2> /dev/null | paste -sd,-)"; then
+            echo "You are API rate limited by GitHub, please authenticate by: \
+
+
+1. Go to https://github.com/settings/tokens
+2. Create a personal access token with no special permissions
+3. Run: ${auth_path}
+
+Add these 2 lines to the file, modify the values for your info and save it:
+
+export GITHUB_USERNAME=\"yourname\"
+export GITHUB_PERSONAL_ACCESS_TOKEN=\"youraccesstoken\""
+            exit "${?}"
+        fi
+        set -e
+
+        tag_name="$(cut -d ',' -f 1 <<< "${tag_info}")"
+        tag_commit_url="$(cut -d ',' -f 2 <<< "${tag_info}")"
+        tag_commit_date="$(curl "${curl_auth}" -s "${tag_commit_url}" | \
+            jq -r ".commit.author.date" | cut -d 'T' -f 1)"
+
+        out+=$"${repo} | ${tag_name} | ${tag_commit_date}${nl}"
+    done < "${github_path}"
+
+    column -t <<< "${out}" | sort -t "|" -k 3 -r
+}
+
+github_latest_tags
