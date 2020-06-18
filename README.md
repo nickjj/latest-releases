@@ -12,7 +12,7 @@ favorite tools and libraries.
 ## Why?
 
 Often times I'm looking forward to new releases of specific software but
-manually going to a GitHub releases page for each repo is boring, especially
+manually going to the GitHub releases page for each repo is boring, especially
 if I want to track a bunch of libraries for a specific programming language.
 
 This tool allows you to define a list of projects and it will report back when
