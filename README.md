@@ -15,9 +15,9 @@ Often times I'm looking forward to new releases of specific software but
 manually going to a GitHub releases page for each repo is boring, especially
 if I want to track a bunch of libraries for a specific programming language.
 
-This tool allows you to define a list of repos that you want to check for new
-releases and after running the `latest-releases` command it will output
-something similar to what you see below:
+This tool allows you to define a list of projects and it will report back when
+the latest release was for each project. After running the `latest-releases`
+command it will output something similar to what you see below:
 
 ```sh
 nick@kitt:~ $ latest-releases
