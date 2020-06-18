@@ -91,7 +91,7 @@ Configure GitHub repos to check by creating the file below:
 
 Then open it in your text editor of choice and add a new line separated list of
 repos that you want to keep tabs on. Each line should only include the
-`repo/owner`, not the entire GitHub URL.
+`owner/repo`, not the entire GitHub URL.
 
 Here's an example of what that file could look like:
 
